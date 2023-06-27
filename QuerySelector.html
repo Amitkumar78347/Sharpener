@@ -29,6 +29,16 @@
     </ul>
    </div>
   </div>
+  <script>
+    // Change font color to green for the second item
+    const secondItem = document.querySelectorAll('#items li')[1];
+    secondItem.style.color = 'green';
 
+    // Select all odd elements and make their background green
+    const oddItems = document.querySelectorAll('#items li:nth-child(odd)');
+    oddItems.forEach(item => {
+      item.style.backgroundColor = 'green';
+    });
+  </script>
 </body>
 </html>
