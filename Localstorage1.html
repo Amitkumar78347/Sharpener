@@ -31,6 +31,8 @@
   <div id="userDetails"></div>
 
   <script>
+    var editingIndex = -1;
+
     function saveFormData() {
       var name = document.getElementById("name").value;
       var email = document.getElementById("email").value;
@@ -43,7 +45,6 @@
         return false;
       }
 
-      // Create an object to store the form data
       var formData = {
         name: name,
         email: email,
@@ -52,51 +53,45 @@
         date: date
       };
 
-      // Retrieve existing user data from local storage (if any)
       var existingUserDataJSON = localStorage.getItem("userData");
       var existingUserData = existingUserDataJSON ? JSON.parse(existingUserDataJSON) : [];
 
-      // Add the new form data to the existing user data array
-      existingUserData.push(formData);
+      if (editingIndex === -1) {
+        existingUserData.push(formData);
+      } else {
+        existingUserData[editingIndex] = formData;
+        editingIndex = -1;
+      }
 
-      // Convert the array to a JSON string
       var updatedUserDataJSON = JSON.stringify(existingUserData);
-
-      // Store the updated user data in local storage
       localStorage.setItem("userData", updatedUserDataJSON);
 
-      // Reset the form fields
       document.getElementById("name").value = "";
       document.getElementById("email").value = "";
       document.getElementById("phone").value = "";
       document.getElementById("time").value = "";
       document.getElementById("date").value = "";
 
-      // Optionally, you can display a success message to the user
       alert("Form data has been saved successfully!");
 
-      // Update the displayed user details
       displayUserDetails();
 
-      // Prevent the form from submitting and refreshing the page
       return false;
     }
 
     function displayUserDetails() {
-      // Retrieve user data from local storage
       var userDataJSON = localStorage.getItem("userData");
       var userData = JSON.parse(userDataJSON);
 
-      // Clear the previous content of userDetails div
       document.getElementById("userDetails").innerHTML = "";
 
-      // Display the user details in userDetails div
       if (userData && userData.length > 0) {
         var userDetailsDiv = document.getElementById("userDetails");
         var userDetailsHTML = "<h3>Registered Users:</h3><ul>";
 
         userData.forEach(function(user, index) {
           userDetailsHTML += "<li>Name: " + user.name + ", Email: " + user.email + ", Phone: " + user.phone + ", Time: " + user.time + ", Date: " + user.date +
+                             " <button onclick='editUser(" + index + ")'>Edit</button> " +
                              " <button onclick='deleteUser(" + index + ")'>Delete</button></li>";
         });
 
@@ -105,25 +100,33 @@
       }
     }
 
-    function deleteUser(index) {
-      // Retrieve user data from local storage
+    function editUser(index) {
       var userDataJSON = localStorage.getItem("userData");
       var userData = JSON.parse(userDataJSON);
 
-      // Remove the user entry at the specified index
+      var user = userData[index];
+
+      document.getElementById("name").value = user.name;
+      document.getElementById("email").value = user.email;
+      document.getElementById("phone").value = user.phone;
+      document.getElementById("time").value = user.time;
+      document.getElementById("date").value = user.date;
+
+      editingIndex = index;
+    }
+
+    function deleteUser(index) {
+      var userDataJSON = localStorage.getItem("userData");
+      var userData = JSON.parse(userDataJSON);
+
       userData.splice(index, 1);
 
-      // Convert the array to a JSON string
       var updatedUserDataJSON = JSON.stringify(userData);
-
-      // Store the updated user data in local storage
       localStorage.setItem("userData", updatedUserDataJSON);
 
-      // Update the displayed user details
       displayUserDetails();
     }
 
-    // Display the user details when the page loads
     displayUserDetails();
   </script>
 </body>
