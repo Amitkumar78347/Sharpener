@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registration Form</title>
+  <style>
+    /* existing CSS styles here */
+  </style>
+</head>
+<body>
+  <h2>Book a phone call with Dr. Amit</h2>
+  <form onsubmit="return saveFormData()">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="phone">Phone:</label>
+    <input type="tel" id="phone" name="phone" required>
+
+    <label for="time">Time Slot for Call:</label>
+    <input type="time" id="time" name="time" required>
+
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required>
+
+    <input type="submit" value="Submit">
+  </form>
+
+  <div id="userDetails"></div>
+
+  <script>
+    function saveFormData() {
+      var name = document.getElementById("name").value;
+      var email = document.getElementById("email").value;
+      var phone = document.getElementById("phone").value;
+      var time = document.getElementById("time").value;
+      var date = document.getElementById("date").value;
+
+      if (name === "" || email === "" || phone === "" || time === "" || date === "") {
+        alert("Please fill in all the required fields.");
+        return false;
+      }
+
+      // Create an object to store the form data
+      var formData = {
+        name: name,
+        email: email,
+        phone: phone,
+        time: time,
+        date: date
+      };
+
+      // Retrieve existing user data from local storage (if any)
+      var existingUserDataJSON = localStorage.getItem("userData");
+      var existingUserData = existingUserDataJSON ? JSON.parse(existingUserDataJSON) : [];
+
+      // Add the new form data to the existing user data array
+      existingUserData.push(formData);
+
+      // Convert the array to a JSON string
+      var updatedUserDataJSON = JSON.stringify(existingUserData);
+
+      // Store the updated user data in local storage
+      localStorage.setItem("userData", updatedUserDataJSON);
+
+      // Reset the form fields
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("time").value = "";
+      document.getElementById("date").value = "";
+
+      // Optionally, you can display a success message to the user
+      alert("Form data has been saved successfully!");
+
+      // Update the displayed user details
+      displayUserDetails();
+
+      // Prevent the form from submitting and refreshing the page
+      return false;
+    }
+
+    function displayUserDetails() {
+      // Retrieve user data from local storage
+      var userDataJSON = localStorage.getItem("userData");
+      var userData = JSON.parse(userDataJSON);
+
+      // Clear the previous content of userDetails div
+      document.getElementById("userDetails").innerHTML = "";
+
+      // Display the user details in userDetails div
+      if (userData && userData.length > 0) {
+        var userDetailsDiv = document.getElementById("userDetails");
+        var userDetailsHTML = "<h3>Registered Users:</h3><ul>";
+
+        userData.forEach(function(user) {
+          userDetailsHTML += "<li>Name: " + user.name + ", Email: " + user.email + ", Phone: " + user.phone + ", Time: " + user.time + ", Date: " + user.date + "</li>";
+        });
+
+        userDetailsHTML += "</ul>";
+        userDetailsDiv.innerHTML = userDetailsHTML;
+      }
+    }
+
+    // Display the user details when the page loads
+    displayUserDetails();
+  </script>
+</body>
+</html>
