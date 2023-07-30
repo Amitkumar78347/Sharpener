@@ -32,6 +32,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
+    let editAppointmentId = null;
+
     function submitForm(event) {
       event.preventDefault();
 
@@ -47,28 +49,50 @@
         time: time,
       };
 
-      axios.post('https://crudcrud.com/api/1ebacf782b8a43fe90b14a0801c47056/Appointmentdata', appointmentData)
-        .then(function (response) {
-          // Handle the successful response here
-          document.getElementById("confirmation").innerText = "Appointment data has been submitted!\n\n" +
-            "Name: " + name + "\n" +
-            "Email: " + email + "\n" +
-            "Date: " + date + "\n" +
-            "Time: " + time;
+      if (editAppointmentId) {
+        // Editing an existing appointment
+        axios.put(`https://crudcrud.com/api/1ebacf782b8a43fe90b14a0801c47056/Appointmentdata/${editAppointmentId}`, appointmentData)
+          .then(function (response) {
+            // Handle the successful response here
+            document.getElementById("confirmation").innerText = "Appointment data has been updated!";
+            editAppointmentId = null;
+            // Reset form fields to empty strings
+            document.getElementById("name").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("date").value = "";
+            document.getElementById("time").value = "";
+            // Fetch and display all appointments
+            fetchAppointments();
+          })
+          .catch(function (error) {
+            // Handle errors here
+            document.getElementById("confirmation").innerText = "Error: Failed to update appointment data.";
+          });
+      } else {
+        // Adding a new appointment
+        axios.post('https://crudcrud.com/api/1ebacf782b8a43fe90b14a0801c47056/Appointmentdata', appointmentData)
+          .then(function (response) {
+            // Handle the successful response here
+            document.getElementById("confirmation").innerText = "Appointment data has been submitted!\n\n" +
+              "Name: " + name + "\n" +
+              "Email: " + email + "\n" +
+              "Date: " + date + "\n" +
+              "Time: " + time;
 
-          // Reset form fields to empty strings
-          document.getElementById("name").value = "";
-          document.getElementById("email").value = "";
-          document.getElementById("date").value = "";
-          document.getElementById("time").value = "";
+            // Reset form fields to empty strings
+            document.getElementById("name").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("date").value = "";
+            document.getElementById("time").value = "";
 
-          // Fetch and display all appointments
-          fetchAppointments();
-        })
-        .catch(function (error) {
-          // Handle errors here
-          document.getElementById("confirmation").innerText = "Error: Failed to submit appointment data.";
-        });
+            // Fetch and display all appointments
+            fetchAppointments();
+          })
+          .catch(function (error) {
+            // Handle errors here
+            document.getElementById("confirmation").innerText = "Error: Failed to submit appointment data.";
+          });
+      }
     }
 
     function fetchAppointments() {
@@ -85,6 +109,7 @@
                 <p>Email: ${email}</p>
                 <p>Date: ${date}</p>
                 <p>Time: ${time}</p>
+                <button onclick="editAppointment('${_id}', '${name}', '${email}', '${date}', '${time}')">Edit</button>
                 <button onclick="deleteAppointment('${_id}')">Delete</button>
               </div>
               <hr>
@@ -96,6 +121,14 @@
         .catch(function (error) {
           console.error(error);
         });
+    }
+
+    function editAppointment(id, name, email, date, time) {
+      editAppointmentId = id;
+      document.getElementById("name").value = name;
+      document.getElementById("email").value = email;
+      document.getElementById("date").value = date;
+      document.getElementById("time").value = time;
     }
 
     function deleteAppointment(id) {
