@@ -25,25 +25,28 @@
       <input type="submit" value="Submit" onclick="submitForm(event)">
     </form>
     <p id="confirmation"></p>
+    <div id="appointmentsList">
+      <!-- Appointments will be displayed here -->
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     function submitForm(event) {
       event.preventDefault();
-  
+
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
       const date = document.getElementById("date").value;
       const time = document.getElementById("time").value;
-  
+
       const appointmentData = {
         name: name,
         email: email,
         date: date,
         time: time,
       };
-  
+
       axios.post('https://crudcrud.com/api/1ebacf782b8a43fe90b14a0801c47056/Appointmentdata', appointmentData)
         .then(function (response) {
           // Handle the successful response here
@@ -52,20 +55,50 @@
             "Email: " + email + "\n" +
             "Date: " + date + "\n" +
             "Time: " + time;
-  
+
           // Reset form fields to empty strings
           document.getElementById("name").value = "";
           document.getElementById("email").value = "";
           document.getElementById("date").value = "";
           document.getElementById("time").value = "";
+
+          // Fetch and display all appointments
+          fetchAppointments();
         })
         .catch(function (error) {
           // Handle errors here
           document.getElementById("confirmation").innerText = "Error: Failed to submit appointment data.";
         });
     }
+
+    function fetchAppointments() {
+      axios.get('https://crudcrud.com/api/1ebacf782b8a43fe90b14a0801c47056/Appointmentdata')
+        .then(function (response) {
+          const appointments = response.data;
+          let appointmentsHtml = "";
+
+          for (const appointment of appointments) {
+            const { name, email, date, time } = appointment;
+            appointmentsHtml += `
+              <div>
+                <p>Name: ${name}</p>
+                <p>Email: ${email}</p>
+                <p>Date: ${date}</p>
+                <p>Time: ${time}</p>
+              </div>
+              <hr>
+            `;
+          }
+
+          document.getElementById("appointmentsList").innerHTML = appointmentsHtml;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+
+    // Fetch and display all appointments on page load
+    window.onload = fetchAppointments;
   </script>
-  
 </body>
 </html>
-
