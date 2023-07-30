@@ -78,13 +78,14 @@
           let appointmentsHtml = "";
 
           for (const appointment of appointments) {
-            const { name, email, date, time } = appointment;
+            const { _id, name, email, date, time } = appointment;
             appointmentsHtml += `
               <div>
                 <p>Name: ${name}</p>
                 <p>Email: ${email}</p>
                 <p>Date: ${date}</p>
                 <p>Time: ${time}</p>
+                <button onclick="deleteAppointment('${_id}')">Delete</button>
               </div>
               <hr>
             `;
@@ -94,6 +95,20 @@
         })
         .catch(function (error) {
           console.error(error);
+        });
+    }
+
+    function deleteAppointment(id) {
+      axios.delete(`https://crudcrud.com/api/1ebacf782b8a43fe90b14a0801c47056/Appointmentdata/${id}`)
+        .then(function (response) {
+          // Handle the successful response here
+          document.getElementById("confirmation").innerText = "Appointment data has been deleted!";
+          // Fetch and display all appointments
+          fetchAppointments();
+        })
+        .catch(function (error) {
+          // Handle errors here
+          document.getElementById("confirmation").innerText = "Error: Failed to delete appointment data.";
         });
     }
 
