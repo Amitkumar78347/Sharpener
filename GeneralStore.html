@@ -2,6 +2,8 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>General Store Inventory</title>
     <style>
         body {
@@ -58,7 +60,7 @@
         // Fetching product details from the API and Displaying on web page.
         async function fetchAndDisplayProducts() {
             try {
-                const response = await axios.get('https://crudcrud.com/api/e52fc500e2ed4fc1a20ef35d80f7f82e/Product_Details');
+                const response = await axios.get('https://crudcrud.com/api/be0577b650ab49db9f32aa95b732bf05/Product_Details');
                 response.data.forEach((product) => {
                     const newRow = productTable.insertRow(-1);
                     newRow.insertCell(0).innerHTML = product.productName;
@@ -81,7 +83,7 @@
             const quantity = document.getElementById('quantity').value;
 
             try {
-                const response = await axios.post('https://crudcrud.com/api/e52fc500e2ed4fc1a20ef35d80f7f82e/Product_Details', {
+                const response = await axios.post('https://crudcrud.com/api/be0577b650ab49db9f32aa95b732bf05/Product_Details', {
                     productName,
                     description,
                     price,
@@ -122,7 +124,7 @@
 
                     const productId = event.target.getAttribute('data-id');
                     try {
-                        await axios.put(`https://crudcrud.com/api/e52fc500e2ed4fc1a20ef35d80f7f82e/Product_Details/${productId}`, {
+                        await axios.put(`https://crudcrud.com/api/be0577b650ab49db9f32aa95b732bf05/Product_Details/${productId}`, {
                             productName,
                             description,
                             price,
